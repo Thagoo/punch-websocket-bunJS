@@ -4,7 +4,7 @@ import { addWebsocketInstance, getWebsocketInstance } from "../redis/wsRedis";
 const fetch = edenFetch(process.env.CLIENT_URL);
 
 export const setUserActive = (data) => {
-  fetch(`/api/user/setActive`, {
+  fetch(`/api/user/userStatus?setActive=true`, {
     method: "post",
     body: data,
   });
@@ -15,12 +15,12 @@ export const joinUser = async (ws, data) => {
 
   if (!ws.data.userId) {
     ws.data.userId = userId;
+
     addWebsocketInstance(userId, ws);
   }
 };
 
 export const sendMessage = async (data) => {
-  const websocket = await getWebsocketInstance(data.participants.recieverId);
-  console.log(websocket);
-  //websocket.send(data.message);
+  const websocket = await getWebsocketInstance(data.recieverId);
+  websocket.send(data);
 };

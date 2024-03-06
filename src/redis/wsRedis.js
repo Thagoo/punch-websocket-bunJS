@@ -1,32 +1,16 @@
 import { connectRedis } from "../lib/connectRedis";
 
-const client = await connectRedis();
+const client = {};
 
-export function addWebsocketInstance(userId, ws) {
-  return new Promise((resolve, reject) => {
-    client.exists(userId, (err, exists) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-
-      if (exists) {
-        reject(new Error("Key already exists"));
-      } else {
-        client.set(userId, ws, (err, reply) => {
-          if (err) {
-            reject(err);
-          } else {
-            resolve(reply);
-          }
-        });
-      }
-    });
-  });
+export async function addWebsocketInstance(userId, ws) {
+  try {
+    client[userId] = ws;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-export async function getWebsocketInstance(userId) {
-  const value = await client.get(userId);
-  const res = JSON.parse(value);
+export async function getWebsocketInstance(recieverId) {
+  const res = client[recieverId];
   return res;
 }

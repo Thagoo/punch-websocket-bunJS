@@ -7,9 +7,19 @@ app
   .ws("/chat", {
     open(ws) {
       console.log("Connection opened");
+      const data = {
+        type: "STATUS",
+        connected: "true",
+      };
+      ws.send(data);
     },
     close(ws) {
       console.log("Connection closed");
+      const data = {
+        type: "STATUS",
+        connected: "false",
+      };
+      ws.send(data);
     },
     message(ws, message) {
       switch (message.type) {
@@ -19,6 +29,7 @@ app
           break;
         }
         case "MESSAGE": {
+          ws.send(message.data);
           sendMessage(message.data);
           break;
         }
